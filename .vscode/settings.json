@@ -1,0 +1,17 @@
+{
+    "deno.enable": true,
+    "deno.unstable": true,
+    "editor.defaultFormatter": "denoland.vscode-deno",
+    "emeraldwalk.runonsave": {
+        "commands": [
+          {
+            "match": "deps.ts$",
+            "cmd": "deno cache ${file}"
+          },
+          {
+            "match": "\\.ts$",
+            "cmd": "deno fmt ${file}"
+          }
+        ]
+    }
+}

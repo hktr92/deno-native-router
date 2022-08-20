@@ -1,5 +1,6 @@
-# Deno native router
+# Deno extended native router
 A zero dependency simple native router in Deno. Only router, nothing else.
+An extended native router in Deno, based on [deno-native-router](https://github.com/mayankchoubey/deno-native-router) project.
 
 # Basic usage
 
@@ -9,7 +10,7 @@ To create router, import the Router class:
 
 ```ts
 import { Router } from "https://deno.land/x/nativerouter/mod.ts";
-const router=new Router();
+const router = new Router();
 ```
 
 ## Add routes
@@ -36,31 +37,37 @@ router.add(
 ```
 
 ## Route request
-Any incoming request, represented by the ```Request``` object, can be routed using ```router.route()``` function. The only input is the ```Request``` object. The router function would look for handlers. If found, the request would be forwarded over to the handler. If not found, a 404 response would be sent. The expected output from the handler is a ```Response``` object.
+Any incoming request, represented by the ```Request``` object, can be routed using ```router.match()``` function. The only input is the ```Request``` object. The router function would look for handlers. If found, the request would be forwarded over to the handler. If not found, a 404 response would be sent. The expected output from the handler is a ```Response``` object.
 
 ```ts
-await router.route(request);
+await router.match(request);
 ```
 
 # A sample app
 ```ts
 import { Router } from "https://deno.land/x/nativerouter/mod.ts";
-import { listenAndServe } from "https://deno.land/std/http/mod.ts";
+import { serve } from "https://deno.land/std@0.152.0/http/server.ts";
 
 const router = new Router();
-router.get("/", async (r: Request, p: Record<string, string>) => {
+router.get("/", async (_r: Request, _p: Record<string, string>) => {
   return new Response("Hello from / handler");
 });
-router.put(
-  "/users/:userId/attachments",
-  async (r: Request, p: Record<string, string>) => {
-    return new Response(
-      "Hello from PUT /users/:userId/attachments handler, params=" +
-        Object.entries(p).join(", "),
-    );
-  },
-);
-listenAndServe(":3000", async (r) => await router.route(r));
+
+router.on("error", (error) => {
+  console.error(error);
+});
+
+serve((req: Request) => router.match(req));
+
 ```
+
+## Events
+
+This fork adds only the [event](https://deno.land/x/event@2.0.1/mod.ts) dependency to enhance the functionality for logging and some advanced usages.
+
+Currently, there are two events emitted:
+- `error` => returns the `Error` object for `Not Found` and `Internal Server Error` (the latter with the `cause` of it);
+- `response` => returns the `Response` object resolved from callback handler.
+
 # Usage
 Check [Examples](./example.ts).
