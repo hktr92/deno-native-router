@@ -67,7 +67,9 @@ export class Router extends EventEmitter<Events> {
         try {
           const response = await handler(req, params);
           this.emit("response", response);
-          return response;
+          return response instanceof Response
+            ? response
+            : new Response(response.body, response.options);
         } catch (error) {
           this.emit(
             "error",

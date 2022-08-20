@@ -1,7 +1,12 @@
 export type CallbackHandler = (
   request: Request,
   params: Record<string, string>,
-) => Promise<Response>;
+) => Promise<Response | ResponseLike>;
+
+export interface ResponseLike {
+  body: BodyInit;
+  options?: ResponseInit;
+}
 
 export const METHODS: Record<string, string> = {
   GET: "GET",

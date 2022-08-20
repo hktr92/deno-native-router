@@ -1,4 +1,6 @@
+import { ResponseLike } from "./types.ts";
+
 export type Events = {
   error: [Error];
-  response: [Response];
+  response: [Response | ResponseLike];
 };

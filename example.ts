@@ -60,6 +60,15 @@ router.patch(
   },
 );
 
+router.get("/response-like", async () => {
+  return {
+    body: "hello from GET /response-like handler",
+    options: {
+      status: 201,
+    },
+  };
+});
+
 router.on("error", (error) => {
   console.error(error);
 });
