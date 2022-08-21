@@ -65,31 +65,39 @@ export class Router extends EventEmitter<Events> {
     this.#add(METHODS.PATCH, pathname, handler);
   }
 
-  async match(req: Request): Promise<Response> {
-    const url = new URL(req.url);
+  async match(request: Request): Promise<Response> {
+    const url = new URL(request.url);
 
-    for (const { pattern, handler } of this.routes[req.method]) {
-      if (pattern.test(req.url)) {
-        const params = pattern.exec(req.url)?.pathname.groups ?? {};
+    for (const { pattern, handler } of this.routes[request.method]) {
+      if (pattern.test(request.url)) {
+        const params = pattern.exec(request.url)?.pathname.groups ?? {};
         try {
-          const response = await handler(req, params);
-          this.emit("response", response);
+          const response = await handler(request, params);
+          this.emit("response", { request, response });
+
           return response instanceof Response
             ? response
             : new Response(response.body, response.options);
         } catch (error) {
           this.emit(
             "error",
-            new Error(`Internal Server Error: ${req.method} ${url.pathname}`, {
-              cause: error,
-            }),
+            new Error(
+              `Internal Server Error: ${request.method} ${url.pathname}`,
+              {
+                cause: error,
+              },
+            ),
           );
+
           return internalServerError();
         }
       }
     }
 
-    this.emit("error", new Error(`Not Found: ${req.method} ${url.pathname}`));
+    this.emit(
+      "error",
+      new Error(`Not Found: ${request.method} ${url.pathname}`),
+    );
 
     return notFound();
   }
