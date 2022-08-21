@@ -23,3 +23,14 @@ export interface Route {
   pattern: URLPattern;
   handler: CallbackHandler;
 }
+
+export enum RequestMethod {
+  Get = "GET",
+  Head = "HEAD",
+  Post = "POST",
+  Put = "PUT",
+  Delete = "DELETE",
+  Options = "OPTIONS",
+  Trace = "TRACE",
+  Patch = "PATCH",
+}
