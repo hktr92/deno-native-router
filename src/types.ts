@@ -34,3 +34,9 @@ export enum RequestMethod {
   Trace = "TRACE",
   Patch = "PATCH",
 }
+
+export interface ActionInfo {
+  method: RequestMethod;
+  path: string;
+  handler: CallbackHandler;
+}

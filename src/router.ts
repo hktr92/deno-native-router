@@ -1,6 +1,6 @@
 import { EventEmitter } from "https://deno.land/x/event@2.0.1/mod.ts";
 import { internalServerError, notFound } from "./response.ts";
-import { CallbackHandler, METHODS, Route } from "./types.ts";
+import { ActionInfo, CallbackHandler, METHODS, Route } from "./types.ts";
 import { Events } from "./events.ts";
 
 export class Router extends EventEmitter<Events> {
@@ -24,6 +24,13 @@ export class Router extends EventEmitter<Events> {
       pattern: new URLPattern({ pathname }),
       handler,
     });
+  }
+
+  /**
+   * Registers a dynamic route, e.g. returned by a controller file
+   */
+  register({ method, path, handler }: ActionInfo) {
+    this.#add(method, path, handler);
   }
 
   get(pathname: string, handler: CallbackHandler) {
